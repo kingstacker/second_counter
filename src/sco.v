@@ -4,7 +4,7 @@
 //  Company       : School                       
 //  Email         : kingstacker_work@163.com     
 //  Device        : Altera cyclone4 ep4ce6f17c8  
-//  Description   :                              
+//  Description   : data produce logic;dout is bcd out;                             
 //************************************************
 module  sco (
 /*i*/   input    wire              clk                 ,
@@ -18,7 +18,7 @@ parameter CNT_10MS = 19'd49_9999;
 reg en_bs;//begin stop;
 reg en_rec; // recording the data;
 reg en_dis; //display the data;
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk or negedge rst_n) begin //begin & stop logic;
     if (~rst_n) begin
         en_bs <= 0;
     end //if
@@ -26,7 +26,7 @@ always @(posedge clk or negedge rst_n) begin
         en_bs <= (key_bs) ? ~en_bs : en_bs;    
     end //else
 end //always
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk or negedge rst_n) begin //recording logic;
     if (~rst_n) begin
         en_rec <= 0;
     end //if
@@ -34,7 +34,7 @@ always @(posedge clk or negedge rst_n) begin
         en_rec <= (en_bs && key_rec) ? 1'b1 : 1'b0;    
     end //else
 end //always
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk or negedge rst_n) begin //display logic;
     if (~rst_n) begin
         en_dis <= 0;
     end //if
@@ -44,7 +44,7 @@ always @(posedge clk or negedge rst_n) begin
 end //always
 reg [18:0] cnt_10ms;
 reg flag_10ms; //0.01s;
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk or negedge rst_n) begin  //cnt_10ms value change logic;
     if (~rst_n) begin
         cnt_10ms <= 0;
     end //if
@@ -52,7 +52,7 @@ always @(posedge clk or negedge rst_n) begin
         cnt_10ms <= (cnt_10ms == CNT_10MS) ? 19'd0 : cnt_10ms + 1'b1;    
     end //else
 end //always
-always @(posedge clk or negedge rst_n) begin
+always @(posedge clk or negedge rst_n) begin //produce one period high signal;
     if (~rst_n) begin
         flag_10ms <= 1'b0;
     end //if
@@ -60,7 +60,7 @@ always @(posedge clk or negedge rst_n) begin
         flag_10ms <= (cnt_10ms == CNT_10MS) ? 1'b1 : 1'b0;    
     end //else
 end //always
-reg [3:0] cnt_0;
+reg [3:0] cnt_0; //lsb-msb => 0-5;
 reg [3:0] cnt_1;
 reg [3:0] cnt_2;
 reg [3:0] cnt_3;
@@ -115,10 +115,10 @@ always @(posedge clk or negedge rst_n) begin
     end //else
 end //always
 
-reg [23:0] data_rec0;
+reg [23:0] data_rec0; //data recording;
 reg [23:0] data_rec1;
 reg [23:0] data_rec2;
-reg [1:0] cnt_rec;
+reg [1:0]  cnt_rec;
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
         cnt_rec <= 0;
@@ -144,7 +144,7 @@ always @(posedge clk or negedge rst_n) begin
 end //always
 
 reg [23:0] data_r;
-reg [1:0] cnt_dis;
+reg [1:0]  cnt_dis;
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
         cnt_dis <= 0;
@@ -159,14 +159,14 @@ always @(posedge clk or negedge rst_n) begin
     end //if
     else begin
         if (en_bs) begin
-           data_r <= {cnt_5,cnt_4,cnt_3,cnt_2,cnt_1,cnt_0}; 
+           data_r <= {cnt_5,cnt_4,cnt_3,cnt_2,cnt_1,cnt_0}; //display;
         end 
         else begin
            case (cnt_dis)
                    2'd0: begin data_r <= {cnt_5,cnt_4,cnt_3,cnt_2,cnt_1,cnt_0}; end
-                   2'd1: begin data_r <= data_rec0; end
-                   2'd2: begin data_r <= data_rec1; end
-                   2'd3: begin data_r <= data_rec2; end
+                   2'd1: begin data_r <= data_rec0; end    //display recording value one;
+                   2'd2: begin data_r <= data_rec1; end    //display recording value two;
+                   2'd3: begin data_r <= data_rec2; end    //display recording value three;
                    default:;
                endcase //case    
         end   

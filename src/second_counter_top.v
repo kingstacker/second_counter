@@ -17,9 +17,9 @@ module  second_counter_top (
 /*o*/   output   wire    [2:0]    sel                 ,                   
 /*o*/   output   wire    [7:0]    seg                  
 );
-wire key_bs_o;
-wire key_rec_o;
-wire key_dis_o;
+wire        key_bs_o;
+wire        key_rec_o;
+wire        key_dis_o;
 wire [23:0] dout;
 //debounce inst;
 debounce  debounce_u1( 
@@ -54,11 +54,11 @@ sco  sco_u1(
 
 //led_display inst;
 led_display  led_display_u1( 
-    .clk                (clk),
-    .rst_n              (rst_n),
-    .din               (dout),
-    .sel               (sel),
-    .seg               (seg)
+    .clk                 (clk),
+    .rst_n               (rst_n),
+    .din                 (dout),
+    .sel                 (sel),
+    .seg                 (seg)
 );
 
 endmodule
